@@ -1,5 +1,8 @@
 # Healthcare
 
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.text_splitter import CharacterTextSplitter
+from PyPDF2 import PdfReader
 
 pdf_reader = PdfReader('budget_speech.pdf')
 
@@ -20,3 +23,4 @@ text_splitter = CharacterTextSplitter(
 splitted_texts = text_splitter.split_text(text)
 
 embeddings = OpenAIEmbeddings()
+
