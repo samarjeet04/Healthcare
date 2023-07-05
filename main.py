@@ -38,7 +38,7 @@ add_logo_from_local(os.path.join(os.path.dirname(__file__), "images\logo.png"))
 st.title('Entity Extractor')
 
 with st.form('my_form'):
-  input_text = st.text_area('Enter the passage:', )
+  uploaded_pdf = st.file_uploader(label='Upload the PDF', type='pdf')
   submitted = st.form_submit_button('Submit')
 
 def add_bg_from_local(image_file):
@@ -76,7 +76,7 @@ llm = OpenAI(temperature=0)
 chain = LLMChain(llm=llm, prompt=entity_prompt,
                  verbose=True, output_key='entity')
 
-if input_text:
+if uploaded_pdf:
     st.write(chain.run(input_text))
 
 
