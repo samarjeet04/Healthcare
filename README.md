@@ -1,10 +1,6 @@
 # Healthcare
-
-#splitting the text using charactersplitter
-text_splitter = CharacterTextSplitter(
-    separator = "\n",
-    chunk_size=8000,
-    chunk_overlap=200,
-    length_function=len
-)
-splitted_texts = text_splitter.split_text(text)
+ner.py", line 552, in _run_script
+    exec(code, module.__dict__)
+  File "C:\Users\samarjeetkalra\ICD_Code\app1.py", line 127, in <module>
+    entity_text = entity['entity']
+TypeError: string indices must be integers
