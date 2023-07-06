@@ -7,7 +7,6 @@ from langchain.text_splitter import CharacterTextSplitter
 import streamlit as st
 from constants import openai_key
 from langchain.chains import LLMChain
-import fitz
 
     
 os.environ['OPENAI_API_KEY'] = openai_key
