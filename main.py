@@ -1,17 +1,17 @@
 import os
 import base64
-from constants import openai_key
+import PyPDF2
 from langchain.llms import OpenAI
 from langchain import PromptTemplate
-from langchain.chains import LLMChain
-from langchain.chains import SequentialChain
-from langchain.memory import ConversationBufferMemory
+from langchain.text_splitter import CharacterTextSplitter 
 import streamlit as st
+from constants import openai_key
+from langchain.chains import LLMChain
 
+    
 os.environ['OPENAI_API_KEY'] = openai_key
 
-#streamlit framwork
-
+#streamlit framework
 def add_logo_from_local(image_file):
     with open(image_file, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode()
@@ -35,12 +35,6 @@ def add_logo_from_local(image_file):
 add_logo_from_local(os.path.join(os.path.dirname(__file__), "images\logo.png"))
   
 
-st.title('Entity Extractor')
-
-with st.form('my_form'):
-  uploaded_pdf = st.file_uploader(label='Upload the PDF', type='pdf')
-  submitted = st.form_submit_button('Submit')
-
 def add_bg_from_local(image_file):
     with open(image_file, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
@@ -55,29 +49,77 @@ def add_bg_from_local(image_file):
     """,
     unsafe_allow_html=True
     )
-add_bg_from_local('BG_IMAGE3.jpg')
+add_bg_from_local('images\BG_IMAGE3.jpg')
 
-#Promp Template
+st.title('Entity Extractor')
+
+with st.form('my_form'):
+  uploaded_pdf = st.file_uploader(label='Upload PDF:', type='pdf')
+  submitted = st.form_submit_button('Submit')
+  
+
+template = '''You are an asssistant whose goal is to extract the following entitie
+         Given text:
+            "{passage}"
+            
+        Find the following entities:
+        1. Percentage Entity
+        2. Corporate Entity
+        2. Monetary Entity
+        3. Location Entity
+        4. Date Entity
+        '''
+
 entity_prompt = PromptTemplate(
-    input_variables=['passage'],
-    template='''Given Passage:
-    "{passage}"
-    
-    Find the following entities:
-    1. Pernentage Entity
-    2. Currency Entity
-    3. Location Entity
-    4. Date Entity
-    '''
-)
-
-
+        input_variables=['passage'],
+        template=template
+        )
 llm = OpenAI(temperature=0)
 chain = LLMChain(llm=llm, prompt=entity_prompt,
-                 verbose=True, output_key='entity')
+                        verbose=True, output_key='entity')
 
-if uploaded_pdf:
-    st.write(chain.run(input_text))
+  
+def read_pdf(file): 
+    pdf_reader = PyPDF2.PdfReader(file) 
+    num_pages = len(pdf_reader.pages) 
+    text = '' 
+    for page_num in range(num_pages): 
+        page = pdf_reader.pages[page_num] 
+        text += page.extract_text() 
+        return text
+
+
+
+def split_text(text): 
+    text_splitter = CharacterTextSplitter(
+        separator="\n", 
+        chunk_size=8000, 
+        chunk_overlap=200, 
+        length_function=len) 
+    splitted_texts = text_splitter.split_text(text) 
+    return splitted_texts
+
+
+
+
+if submitted and uploaded_pdf: 
+    pdf_text = read_pdf(uploaded_pdf)
+    # Split the text into chunks
+    text_chunks = split_text(pdf_text)
+
+# Extract entities from each text chunk
+    entities = []
+    for chunk in text_chunks:
+        chunk_entities = chain.run(passage=chunk['text'])
+        entities.extend(chunk_entities)
+
+# Display entities
+    st.subheader('Extracted Entities')
+    for entity in entities:
+        st.text(f'Entity: {entity["entity"]}, Type: {entity["type"]}, Start: {entity["start"]}, End: {entity["end"]}')
+
+
+
 
 
 
