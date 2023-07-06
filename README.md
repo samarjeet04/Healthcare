@@ -1,11 +1,10 @@
 # Healthcare
 
-# Extracting Entities from each text chunk
-    all_entities = []
+all_entities = []
 
     for chunk in chunk_text:
-        result = chain.run([chunk])
-        entities = result[0].get('entity', {})
+        result = chain.run(inputs=[chunk])
+        entities = result.get('entity', {})
         all_entities.append(entities)
 
     # Displaying the extracted entities
