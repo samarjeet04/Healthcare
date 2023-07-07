@@ -58,7 +58,7 @@ with st.form('my_form'):
   submitted = st.form_submit_button('Submit')
   
 
-template = '''You are an asssistant whose goal is to extract the following entitie
+template = '''You are an asssistant whose goal is to extract the following entities:
          Given text:
             "{passage}"
             
@@ -86,21 +86,16 @@ def read_pdf(file):
     for page_num in range(num_pages): 
         page = pdf_reader.pages[page_num] 
         text += page.extract_text() 
-        return text
-
-
+    return text
 
 def split_text(text): 
     text_splitter = CharacterTextSplitter(
         separator="\n", 
-        chunk_size=8000, 
+        chunk_size=800, 
         chunk_overlap=200, 
         length_function=len) 
     splitted_texts = text_splitter.split_text(text) 
     return splitted_texts
-
-
-
 
 if submitted and uploaded_pdf: 
     pdf_text = read_pdf(uploaded_pdf)
@@ -110,13 +105,13 @@ if submitted and uploaded_pdf:
 # Extract entities from each text chunk
     entities = []
     for chunk in text_chunks:
-        chunk_entities = chain.run(passage=chunk['text'])
-        entities.extend(chunk_entities)
+        result = chain.run(passage =chunk)
+        entities.append(result)
 
 # Display entities
     st.subheader('Extracted Entities')
     for entity in entities:
-        st.text(f'Entity: {entity["entity"]}, Type: {entity["type"]}, Start: {entity["start"]}, End: {entity["end"]}')
+        st.text(f'Entity: {entity}, Type: {chain.output_key}')
 
 
 
