@@ -1,9 +1,55 @@
 # Healthcare
 
-TypeError: string indices must be integers
-Traceback:
-File "C:\Users\samarjeetkalra\AppData\Local\miniconda3\envs\myenv\lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 552, in _run_script
-    exec(code, module.__dict__)
-File "C:\Users\samarjeetkalra\ICD_Code\main.py", line 113, in <module>
-    chunk_entities = chain.run(passage=chunk['text']
+[Yesterday 4:26 PM] Malik, Akshay
 
+{[{
+
+"entity_type": ,
+
+"page_number":,
+
+"start_index":,
+
+"end_index":,
+
+"entity_text":
+
+ 
+
+},
+
+{
+
+"entity_type": ,
+
+"page_number":,
+
+"start_index":,
+
+"end_index":,
+
+"entity_text":
+
+ 
+
+}
+
+,
+
+{
+
+"entity_type": ,
+
+"page_number":,
+
+"start_index":,
+
+"end_index":,
+
+"entity_text":
+
+ 
+
+}
+
+]}
