@@ -1,6 +1,5 @@
 # Healthcare
 
-[Yesterday 4:26 PM] Malik, Akshay
 
 {[{
 
