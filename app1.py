@@ -60,7 +60,7 @@ if submitted and uploaded_pdf:
     text_chunks = split_text(pdf_text)
 
 # Extract entities from each text chunk
-     entities = []
+    entities = []
     start_index = 0
     for chunk in text_chunks:
         result = chain.run(passage=chunk)
@@ -74,7 +74,12 @@ if submitted and uploaded_pdf:
     # Convert entities to list format
     entities_list = []
     for entity in entities:
-        entities_list.append(list(entity.values()))
+        entities_list.append([
+            entity["Entity_Name"],
+            entity["Entity_Type"],
+            int(entity["Start_Index"]),
+            int(entity["End_Index"])
+        ])
 
     json_data = json.dumps(entities, indent=4)
 
