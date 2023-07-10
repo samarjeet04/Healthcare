@@ -89,5 +89,10 @@ if submitted and uploaded_pdf:
         file_name="extracted_entities.json",
         mime='application/json'
     )
-
+  #Traceback (most recent call last):
+  File "C:\Users\samarjeetkalra\AppData\Local\miniconda3\envs\myenv\lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 552, in _run_script
+    exec(code, module.__dict__)
+  File "C:\Users\samarjeetkalra\ICD_Code\app1.py", line 124, in <module>
+    chunk_entities = result["entity"]
+TypeError: string indices must be integers
 
