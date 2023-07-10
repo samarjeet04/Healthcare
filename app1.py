@@ -14,11 +14,16 @@ template = '''You are an asssistant whose goal is to extract the following entit
         3. Location Entity
         4. Date Entity
 
-        Format the output as JSON with the following keys:
-        Entity Name:
-        Entity Type:
-        Start Index of Entity:
-        End Index of Entity: 
+        Format the output as JSON with the following information:
+        Entity Name,
+        Entity Type,
+        Start Index of Entity,
+        End Index of Entity
+        strictly use the following keys in json
+        Entity_Name,
+        Entity_Type,
+        Start_Index,
+        End_Index
 
         '''
 
@@ -60,13 +65,13 @@ if submitted and uploaded_pdf:
         result = chain.run(passage =chunk)
         entities.append(result)
 
-# Display entities
-    st.subheader('Extracted Entities')
-    for entity in entities:
-        st.text(f'Entity: {entity}, Type: {chain.output_key}')
 
+    json_data = json.dumps(entities, indent=4)
 
+    st.download_button(
+        label="Downlaod Json File",
+        data=json_data.encode("utf-8"),
+        file_name="extracted_entities.json",
+        mime='application/json'
 
-
-
-
+    )
