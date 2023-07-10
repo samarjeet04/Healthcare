@@ -60,24 +60,26 @@ if submitted and uploaded_pdf:
     text_chunks = split_text(pdf_text)
 
 # Extract entities from each text chunk
+    # Extract entities from each text chunk
     entities = []
+    start_index = 0
     for chunk in text_chunks:
-        result = chain.run(passage =chunk)
-        entities.append(result)
-
+        result = chain.run(passage=chunk)
+        chunk_entities = result["entity"]
+        for entity in chunk_entities:
+            entity["Start_Index"] += start_index
+            entity["End_Index"] += start_index
+        entities.extend(chunk_entities)
+        start_index += len(chunk)
 
     json_data = json.dumps(entities, indent=4)
 
     st.download_button(
-        label="Downlaod Json File",
-
-
+        label="Download JSON File",
         data=json_data.encode("utf-8"),
         file_name="extracted_entities.json",
         mime='application/json'
-
     )
-
 
 
 #However, there is one issue, entity in each paragraph are starting from 0th index. 
