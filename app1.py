@@ -70,8 +70,16 @@ if submitted and uploaded_pdf:
 
     st.download_button(
         label="Downlaod Json File",
+
+
         data=json_data.encode("utf-8"),
         file_name="extracted_entities.json",
         mime='application/json'
 
     )
+
+
+
+#However, there is one issue, entity in each paragraph are starting from 0th index. 
+
+#You will need to modify the entities in such a way that, after 1st paragraph, code starts adding length of each paragraph, so that, in second para, entity index do not start from 0. 
