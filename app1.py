@@ -67,8 +67,8 @@ if submitted and uploaded_pdf:
         result = chain.run(passage=chunk)
         chunk_entities = result["entity"]
         for entity in chunk_entities:
-            entity["Start_Index"] += start_index
-            entity["End_Index"] += start_index
+            entity["Start_Index"] = str(int(entity["Start_Index"]) + start_index)
+            entity["End_Index"] = str(int(entity["End_Index"]) + start_index)
         entities.extend(chunk_entities)
         start_index += len(chunk)
 
@@ -82,6 +82,3 @@ if submitted and uploaded_pdf:
     )
 
 
-#However, there is one issue, entity in each paragraph are starting from 0th index. 
-
-#You will need to modify the entities in such a way that, after 1st paragraph, code starts adding length of each paragraph, so that, in second para, entity index do not start from 0. 
