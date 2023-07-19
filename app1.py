@@ -1,3 +1,59 @@
+import os
+import base64
+import json
+import PyPDF2
+from langchain.llms import OpenAI
+from langchain import PromptTemplate
+from langchain.text_splitter import CharacterTextSplitter 
+import streamlit as st
+from constants import openai_key
+from langchain.chains import LLMChain
+
+    
+os.environ['OPENAI_API_KEY'] = openai_key
+
+#streamlit framework
+def add_logo_from_local(image_file):
+    with open(image_file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode()
+    style = '''
+            <style>
+            .logo {
+                position: absolute;
+                top: -50px;
+                left: -247px;
+                z-index: 0;
+            }
+
+            </style>
+            '''
+    logo = f'<img class="logo" src="data:image/png;base64,{encoded_string}" width="120">'
+
+    st.markdown(style, unsafe_allow_html=True)
+
+    st.empty().markdown(logo, unsafe_allow_html=True)
+
+add_logo_from_local(os.path.join(os.path.dirname(__file__), "images\logo.png"))
+  
+
+def add_bg_from_local(image_file):
+    with open(image_file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+    st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background-image: url(data:image/{"jpg"};base64,{encoded_string.decode()});
+        background-size: cover
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+    )
+add_bg_from_local('images\BG_IMAGE3.jpg')
+
+st.title('Entity Identifier')
+
 with st.form('my_form'):
   uploaded_pdf = st.file_uploader(label='Upload PDF:', type='pdf')
   submitted = st.form_submit_button('Submit')
@@ -19,6 +75,7 @@ template = '''You are an asssistant whose goal is to extract the following entit
         Entity Type,
         Start Index of Entity,
         End Index of Entity
+
         strictly use the following keys in json
         Entity_Name,
         Entity_Type,
@@ -56,31 +113,15 @@ def split_text(text):
 
 if submitted and uploaded_pdf: 
     pdf_text = read_pdf(uploaded_pdf)
-    # Split the text into chunks
+    # Split the text into chunks    
     text_chunks = split_text(pdf_text)
 
 # Extract entities from each text chunk
     entities = []
-    start_index = 0
     for chunk in text_chunks:
-        result = chain.run(passage=chunk)
-        chunk_entities = result["entity"]
-        for entity in chunk_entities:
-            entity["Start_Index"] = int(entity["Start_Index"]) + start_index
-            entity["End_Index"] = int(entity["End_Index"]) + start_index
-        entities.extend(chunk_entities)
-        start_index += len(chunk)
-
-    # Convert entities to list format
-    entities_list = []
-    for entity in entities:
-        entities_list.append([
-            entity["Entity_Name"],
-            entity["Entity_Type"],
-            int(entity["Start_Index"]),
-            int(entity["End_Index"])
-        ])
-
+        result = chain.run(passage =chunk)
+        entities.append(result)
+        
     json_data = json.dumps(entities, indent=4)
 
     st.download_button(
@@ -89,10 +130,13 @@ if submitted and uploaded_pdf:
         file_name="extracted_entities.json",
         mime='application/json'
     )
-  #Traceback (most recent call last):
-  File "C:\Users\samarjeetkalra\AppData\Local\miniconda3\envs\myenv\lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 552, in _run_script
-    exec(code, module.__dict__)
-  File "C:\Users\samarjeetkalra\ICD_Code\app1.py", line 124, in <module>
-    chunk_entities = result["entity"]
-TypeError: string indices must be integers
+
+
+
+
+
+
+
+
+
 
