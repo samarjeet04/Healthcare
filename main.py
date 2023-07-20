@@ -129,11 +129,14 @@ if submitted and uploaded_pdf:
         mime='application/json'
     )
 
-    # Display entities in an expander
     st.subheader('Extracted Entities')
-    for i, entity in enumerate(entities, 1):
-        with st.expander(f'Entity {i}', style='background-color: white'):
-            st.json(entity)
+progress_bar = st.progress(0)  # Initialize the progress bar
+
+for i, entity in enumerate(entities, 1):
+    with st.expander(f'Entity {i}', style='background-color: white'):
+        st.json(entity)
+    progress = i / len(entities)  # Calculate the progress as a percentage
+    progress_bar.progress(progress)  # Update the progress bar
 
 
 
