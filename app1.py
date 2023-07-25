@@ -133,6 +133,86 @@ if submitted and uploaded_pdf:
 
 
 
+import streamlit as st
+
+# Define the function for the first page (Name, Age, Location input)
+def get_user_info():
+    st.title("User Information")
+    name = st.text_input("Enter your name")
+    age = st.number_input("Enter your age", min_value=0, max_value=150, step=1)
+    location = st.text_input("Enter your location")
+    
+    if st.button("Submit"):
+        # Store the user information in session state
+        st.session_state.name = name
+        st.session_state.age = age
+        st.session_state.location = location
+
+        # Direct to the second page (show_name)
+        st.session_state.current_page = "show_name"
+
+# Define the function for the second page (Display name)
+def show_name():
+    st.title("Hello!")
+    st.write(f"Your name: {st.session_state.name}")
+    col1, col2 = st.columns(2)
+    if col1.button("Back"):
+        # Go back to the first page (get_user_info)
+        st.session_state.current_page = "get_user_info"
+    if col2.button("Next Page"):
+        # Direct to the third page (show_age)
+        st.session_state.current_page = "show_age"
+
+# Define the function for the third page (Display age)
+def show_age():
+    st.title("Your Age")
+    st.write(f"Your age: {st.session_state.age}")
+    col1, col2 = st.columns(2)
+    if col1.button("Back"):
+        # Go back to the second page (show_name)
+        st.session_state.current_page = "show_name"
+    if col2.button("Next Page"):
+        # Direct to the fourth page (show_location)
+        st.session_state.current_page = "show_location"
+
+# Define the function for the fourth page (Display location)
+def show_location():
+    st.title("Your Location")
+    st.write(f"Your location: {st.session_state.location}")
+    if st.button("Back"):
+        # Go back to the third page (show_age)
+        st.session_state.current_page = "show_age"
+
+# Main app
+def main():
+    # Initialize session state variables
+    if "name" not in st.session_state:
+        st.session_state.name = None
+
+    if "age" not in st.session_state:
+        st.session_state.age = None
+
+    if "location" not in st.session_state:
+        st.session_state.location = None
+
+    if "current_page" not in st.session_state:
+        st.session_state.current_page = "get_user_info"
+
+    if st.session_state.current_page == "get_user_info":
+        get_user_info()
+    elif st.session_state.current_page == "show_name":
+        show_name()
+    elif st.session_state.current_page == "show_age":
+        show_age()
+    else:
+        show_location()
+
+if __name__ == "__main__":
+    main()
+
+
+
+
 
 
 
