@@ -4,8 +4,8 @@ import json
 
 # Define the Kibana server URL and API key credentials
 kibana_url = "http://localhost:5601"
-api_key_id = "W2-7Z4kBcWoabTwEMNfd"
-api_key = "NcXM0L3gTQuou_BoQDK0Lw"
+api_key_id = ""
+api_key = ""
 
 # Encode the API key ID and key in Base64 format
 api_key_encoded = base64.standard_b64encode(f"{api_key_id}:{api_key}".encode("utf-8")).decode("utf-8")
