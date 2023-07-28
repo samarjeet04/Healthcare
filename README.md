@@ -1,47 +1,25 @@
 #HEALTHCARE
 
 
-
-import os
-import base64
-import pandas as pd
-import streamlit as st
-from langchain.llms import OpenAI
-from langchain import PromptTemplate
-from langchain.text_splitter import CharacterTextSplitter 
-from langchain.agents import create_pandas_dataframe_agent
-from constants import openai_key
-from langchain.chains import LLMChain
-
-
-os.environ['OPENAI_API_KEY'] = openai_key
-
-#streamlit framework
-
-st.title('**Issue Severity**')
-
-with st.form('my_form'):
-    uploaded_csv = st.file_uploader(label='Upload CSV:', type='csv')
-    submitted = st.form_submit_button('Submit')
-    if not uploaded_csv:
-        st.stop()
-    
-    data = pd.read_csv(uploaded_csv)
-
-    agent = create_pandas_dataframe_agent(OpenAI(temperature=0), data, verbose=True)
-
-
-
-    template = ''' You are an assistant whose goals are as following:
-               
-               1. Precisely read the column "Issue Description" in the CSV file.
-               2. Classify the issue to a primary impacted line of business and issue severity, this should 
-                  done for each issue in the CSV file.
-               3. Create a tabular data having 2 columns, these columns will contain Primary Impacted LOB and Issue Severity 
-                  corresponding to the issue described in the CSV.
-
-    '''
-
-    if submitted:
+if submitted:
+    # Show a spinner while the AI model is processing the data
+    with st.spinner('Processing...'):
         insights = agent.run(template)
-        st.write(insights)
+
+    # Prepare the data for CSV file
+    csv_data = {
+        "Primary_Impacted_LOB": insights["Primary_Impacted_LOB"],
+        "Issue_Severity": insights["Issue_Severity"]
+    }
+    csv_df = pd.DataFrame(csv_data)
+
+    # Create and download CSV file
+    csv_file_path = "issue_severity_tabular_data.csv"
+    csv_df.to_csv(csv_file_path, index=False)
+
+    st.download_button(
+        label="Download Tabular Data CSV",
+        data=csv_file_path,
+        file_name="issue_severity_tabular_data.csv",
+        mime="text/csv"
+    )
