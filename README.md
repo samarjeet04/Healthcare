@@ -3,28 +3,29 @@
 
 
 
-   def get_label_mapping_dict(self, element_types, inverse=False):
+   def compute_metrics(self, p):
+        """
+        Function to compute different metrices for model training
+        """
+        predictions, labels = p
+        predictions = np.argmax(predictions, axis=2)
+        label_list = list(self.TRAIN_LABEL2ID.keys())
+        
+        # Remove ignored index (special tokens)
+        true_predictions = [
+            [label_list[p] for (p, l) in zip(prediction, label) if l != -100]
+            for prediction, label in zip(predictions, labels)
+        ]
+        true_labels = [
+            [label_list[l] for (p, l) in zip(prediction, label) if l != -100]
+            for prediction, label in zip(predictions, labels)
+        ]
+        precision = precision_score(true_labels, true_predictions)
+        recall = recall_score(true_labels, true_predictions)
+        f1 = f1_score(true_labels, true_predictions)
 
-        if inverse == True:
-
-            mapping_dict = {"0": "O"}
-
-            for el_type in sorted(element_types):
-
-                mapping_dict.update({str(max([int(i) for i in mapping_dict.keys()])+1): f'B-{el_type}',
-
-                                    str(max([int(i) for i in mapping_dict.keys()])+2): f'I-{el_type}'})
-
-        else:
-
-            mapping_dict = {"O": 0}
-
-            for el_type in sorted(element_types):
-
-                mapping_dict.update({f'B-{el_type}': max(mapping_dict.values())+1,
-
-                                    f'I-{el_type}': max(mapping_dict.values())+2})
-
-
-
-        return mapping_dict
+        return {
+            "precision": precision,
+            "recall": recall,
+            "f1": f1
+        }
